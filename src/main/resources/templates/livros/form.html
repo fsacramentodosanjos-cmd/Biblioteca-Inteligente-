@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de livro')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('livros')}"></aside>
+
+    <main class="conteudo">
+        <header class="cabecalho-pagina">
+            <h1 th:text="${livro.id == null} ? 'Cadastrar livro' : 'Editar livro'">Cadastrar livro</h1>
+        </header>
+
+        <form class="ficha" method="post" novalidate
+              th:object="${livro}"
+              th:action="${livro.id == null} ? @{/livros} : @{/livros/{id}(id=${livro.id})}">
+
+            <div class="aviso aviso-erro" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</span>
+            </div>
+
+            <div class="campo">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" th:field="*{titulo}" class="form-control" maxlength="100" required th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{titulo}">Erro</div>
+            </div>
+
+            <div class="campo">
+                <label for="autor" class="form-label">Autor</label>
+                <input type="text" th:field="*{autor}" class="form-control" maxlength="100" required th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{autor}">Erro</div>
+            </div>
+
+            <div class="linha-campos">
+                <div class="campo">
+                    <label for="isbn" class="form-label">ISBN</label>
+                    <input type="text" th:field="*{isbn}" class="form-control" maxlength="19" required th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{isbn}">Erro</div>
+                </div>
+                <div class="campo">
+                    <label for="anoPublicacao" class="form-label">Ano de publicação</label>
+                    <input type="number" th:field="*{anoPublicacao}" class="form-control" min="1000" max="2100" required th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{anoPublicacao}">Erro</div>
+                </div>
+            </div>
+
+            <div class="campo">
+                <label for="editora" class="form-label">Editora</label>
+                <input type="text" th:field="*{editora}" class="form-control" maxlength="100" required th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{editora}">Erro</div>
+            </div>
+
+            <div class="campo">
+                <label for="categoria" class="form-label">Categoria</label>
+                <select th:field="*{categoria}" class="form-select" required th:errorclass="is-invalid">
+                    <option value="">Selecione uma categoria</option>
+                    <option th:each="c : ${categorias}" th:value="${c}" th:text="${c.rotulo}">Categoria</option>
+                </select>
+                <div class="invalid-feedback" th:errors="*{categoria}">Erro</div>
+            </div>
+
+            <!-- Situação: só aparece na edição. Emprestado só muda ao registrar a devolução. -->
+            <div class="campo" th:if="${livro.id != null and livro.status?.name() == 'EMPRESTADO'}">
+                <label class="form-label">Situação</label>
+                <input type="text" class="form-control" value="Emprestado" disabled>
+                <input type="hidden" th:field="*{status}">
+                <div class="form-text">Para mudar a situação, registre a devolução em Empréstimos.</div>
+            </div>
+            <div class="campo" th:if="${livro.id != null and livro.status?.name() != 'EMPRESTADO'}">
+                <label for="status" class="form-label">Situação</label>
+                <select th:field="*{status}" class="form-select">
+                    <option value="DISPONIVEL">Disponível</option>
+                    <option value="PERDIDO">Perdido</option>
+                </select>
+            </div>
+
+            <div class="ficha-acoes">
+                <button type="submit" class="btn btn-primary">Salvar livro</button>
+                <a class="btn btn-link" th:href="@{/livros}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

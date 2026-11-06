@@ -1,0 +1,243 @@
+/* Biblioteca Inteligente — identidade visual
+   Ideia: o balcão de uma biblioteca. Papel frio, tinta escura e o violeta do carimbo de devolução. */
+
+:root {
+    --papel: #eceff1;
+    --superficie: #fbfcfc;
+    --tinta: #1b2430;
+    --tinta-suave: #5b6673;
+    --linha: #d5dbe0;
+    --selo: #4a3d9a;          /* violeta do carimbo */
+    --selo-forte: #3a2f80;
+    --selo-fundo: #e9e6f7;
+    --ok: #2b7a58;
+    --alerta: #b3382c;
+    --ambar: #a86a12;
+    --fonte-titulo: "Newsreader", Georgia, "Times New Roman", serif;
+    --fonte-corpo: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+[data-bs-theme="dark"] {
+    --papel: #12171c;
+    --superficie: #1a2128;
+    --tinta: #e6eaee;
+    --tinta-suave: #9aa5b1;
+    --linha: #2b3540;
+    --selo: #a79df2;
+    --selo-forte: #c0b8f7;
+    --selo-fundo: #262146;
+    --ok: #5fc79a;
+    --alerta: #ef7d70;
+    --ambar: #e0a24a;
+}
+
+/* Bootstrap lê estas variáveis; apontamos para a nossa paleta */
+:root, [data-bs-theme="light"], [data-bs-theme="dark"] {
+    --bs-body-bg: var(--superficie);
+    --bs-body-color: var(--tinta);
+    --bs-border-color: var(--linha);
+    --bs-secondary-color: var(--tinta-suave);
+    --bs-link-color: var(--selo);
+    --bs-link-hover-color: var(--selo-forte);
+    --bs-link-color-rgb: 74, 61, 154;
+    --bs-border-radius: .25rem;
+    --bs-border-radius-sm: .2rem;
+}
+
+body {
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--fonte-corpo);
+    font-size: 1rem;
+    line-height: 1.55;
+}
+
+h1, h2, h3 { font-family: var(--fonte-titulo); font-weight: 600; letter-spacing: -.01em; }
+h1 { font-size: 2.1rem; line-height: 1.15; margin: 0; }
+h2 { font-size: 1.35rem; margin: 0 0 .9rem; }
+
+:focus-visible { outline: 2px solid var(--selo); outline-offset: 2px; }
+
+/* ---------- estrutura ---------- */
+.shell { display: grid; grid-template-columns: 15.5rem minmax(0, 1fr); min-height: 100vh; }
+
+.rail {
+    position: sticky; top: 0; height: 100vh;
+    display: flex; flex-direction: column; gap: 1.75rem;
+    padding: 1.5rem 1rem;
+    background: var(--superficie);
+    border-right: 1px solid var(--linha);
+}
+.rail-marca {
+    display: flex; align-items: center; gap: .7rem;
+    color: var(--selo); text-decoration: none;
+    font-family: var(--fonte-titulo); font-weight: 600; font-size: 1.1rem; line-height: 1.15;
+}
+.rail-marca:hover { color: var(--selo-forte); }
+.rail-nav { display: flex; flex-direction: column; gap: .2rem; }
+.rail-nav a {
+    display: flex; align-items: center; gap: .65rem;
+    padding: .55rem .75rem; border-radius: .25rem;
+    color: var(--tinta); text-decoration: none; font-weight: 500;
+}
+.rail-nav a:hover { background: var(--selo-fundo); }
+.rail-nav a.ativo { background: var(--selo-fundo); color: var(--selo-forte); box-shadow: inset 3px 0 0 var(--selo); }
+.rail-tema {
+    margin-top: auto; align-self: flex-start;
+    display: inline-flex; gap: .5rem; align-items: center;
+    background: none; border: 1px solid var(--linha); border-radius: .25rem;
+    color: var(--tinta-suave); padding: .35rem .7rem; font-size: .875rem;
+}
+.rail-tema:hover { color: var(--tinta); border-color: var(--tinta-suave); }
+
+.conteudo { padding: 2rem clamp(1rem, 4vw, 3rem) 4rem; max-width: 72rem; width: 100%; }
+
+.cabecalho-pagina {
+    display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
+    gap: 1rem; margin-bottom: 1.5rem;
+}
+.subtitulo { margin: .25rem 0 0; color: var(--tinta-suave); text-transform: capitalize; }
+
+/* ---------- botões ---------- */
+.btn { font-weight: 500; }
+.btn-primary {
+    --bs-btn-bg: var(--selo); --bs-btn-border-color: var(--selo); --bs-btn-color: #fff;
+    --bs-btn-hover-bg: var(--selo-forte); --bs-btn-hover-border-color: var(--selo-forte); --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--selo-forte); --bs-btn-active-border-color: var(--selo-forte); --bs-btn-active-color: #fff;
+    --bs-btn-disabled-bg: var(--selo); --bs-btn-disabled-border-color: var(--selo);
+}
+[data-bs-theme="dark"] .btn-primary { --bs-btn-color: #14102e; --bs-btn-hover-color: #14102e; --bs-btn-active-color: #14102e; }
+.btn-outline-primary {
+    --bs-btn-color: var(--selo); --bs-btn-border-color: var(--selo);
+    --bs-btn-hover-bg: var(--selo); --bs-btn-hover-border-color: var(--selo); --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--selo-forte); --bs-btn-active-border-color: var(--selo-forte); --bs-btn-active-color: #fff;
+}
+[data-bs-theme="dark"] .btn-outline-primary { --bs-btn-hover-color: #14102e; --bs-btn-active-color: #14102e; }
+.btn-outline-secondary { --bs-btn-color: var(--tinta-suave); --bs-btn-border-color: var(--linha);
+    --bs-btn-hover-bg: var(--selo-fundo); --bs-btn-hover-color: var(--tinta); --bs-btn-hover-border-color: var(--tinta-suave); }
+.btn-outline-danger { --bs-btn-color: var(--alerta); --bs-btn-border-color: var(--linha);
+    --bs-btn-hover-bg: var(--alerta); --bs-btn-hover-border-color: var(--alerta); --bs-btn-hover-color: #fff; }
+.btn-link { color: var(--selo); }
+
+.form-control, .form-select { background-color: var(--superficie); border-color: var(--linha); color: var(--tinta); }
+.form-control:focus, .form-select:focus { border-color: var(--selo); box-shadow: 0 0 0 .2rem color-mix(in srgb, var(--selo) 25%, transparent); }
+
+/* ---------- avisos ---------- */
+.aviso {
+    display: flex; gap: .6rem; align-items: flex-start;
+    padding: .75rem 1rem; margin-bottom: 1.25rem;
+    border-left: 4px solid; border-radius: .25rem; background: var(--superficie);
+}
+.aviso-ok { border-color: var(--ok); }
+.aviso-ok i { color: var(--ok); }
+.aviso-erro { border-color: var(--alerta); }
+.aviso-erro i { color: var(--alerta); }
+
+/* ---------- início ---------- */
+.indicadores {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+    margin: 0 0 2.25rem; border-top: 2px solid var(--tinta); border-bottom: 1px solid var(--linha);
+}
+.indicadores > div {
+    display: flex; flex-direction: column-reverse; /* número em cima, rótulo embaixo (a ordem no HTML é rótulo, número) */
+    padding: .9rem 1rem; border-left: 1px solid var(--linha);
+}
+.indicadores > div:first-child { border-left: 0; padding-left: 0; }
+.indicadores dd { margin: 0; font-family: var(--fonte-titulo); font-size: 2rem; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.indicadores dt { font-weight: 400; color: var(--tinta-suave); font-size: .875rem; }
+.indicadores > div.alerta dd, .indicadores > div.alerta dt { color: var(--alerta); }
+
+.balcao { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 2.5rem; }
+
+.slips { list-style: none; margin: 0; padding: 0; }
+.slip {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    padding: .85rem 0; border-bottom: 1px solid var(--linha);
+}
+.slip-corpo { display: flex; flex-direction: column; min-width: 0; }
+.slip-corpo span { color: var(--tinta-suave); }
+.slip-corpo small { color: var(--alerta); }
+.slip-acao { display: flex; flex-direction: column; align-items: flex-end; gap: .5rem; flex-shrink: 0; }
+.slips-compactos .slip { padding: .6rem 0; }
+.atalhos { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1.25rem 0 0; }
+
+/* ---------- o carimbo: a data de devolução vira o elemento marcante ---------- */
+.carimbo {
+    display: inline-block; padding: .05rem .55rem;
+    border: 1.5px solid var(--selo); border-radius: 3px; color: var(--selo);
+    font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: .02em;
+    transform: rotate(-1.5deg);
+}
+.carimbo.vencido { border-color: var(--alerta); color: var(--alerta); }
+.carimbo.devolvido { border-style: dashed; color: var(--tinta-suave); border-color: var(--tinta-suave); transform: none; }
+
+/* ---------- situação ---------- */
+.estado {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .8125rem; font-weight: 600; white-space: nowrap; color: var(--tinta-suave);
+}
+.estado::before { content: ""; width: .55rem; height: .55rem; border-radius: 50%; background: currentColor; }
+.estado-disponivel { color: var(--ok); }
+.estado-emprestado, .estado-aberto { color: var(--selo); }
+.estado-perdido { color: var(--ambar); }
+.estado-atrasado { color: var(--alerta); }
+
+/* ---------- tabelas e listas ---------- */
+.busca { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; max-width: 36rem; }
+.busca .form-control { flex: 1 1 14rem; }
+
+.tabela { --bs-table-bg: transparent; --bs-table-color: var(--tinta); --bs-table-border-color: var(--linha); margin: 0; }
+.tabela thead th { font-weight: 600; color: var(--tinta-suave); font-size: .875rem; border-bottom: 2px solid var(--tinta); white-space: nowrap; }
+.tabela td { padding-top: .75rem; padding-bottom: .75rem; }
+.tabela td.num { font-variant-numeric: tabular-nums; }
+.tabela td.acoes { display: flex; gap: .35rem; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.tabela td.acoes form { margin: 0; }
+.nota { display: block; color: var(--tinta-suave); font-size: .8125rem; }
+
+.livro-celula { display: flex; gap: .75rem; align-items: center; }
+.livro-celula small { display: block; color: var(--tinta-suave); }
+.lombada { flex: 0 0 .5rem; height: 2.4rem; border-radius: 2px; background: #6b7480; }
+.cat-romance { background: #9b3d5a; }
+.cat-ficcao { background: #3f6fb0; }
+.cat-tecnologia { background: #2b7a8a; }
+.cat-programacao { background: #4a3d9a; }
+.cat-biografia { background: #a86a12; }
+.cat-historia { background: #7a5a3a; }
+.cat-ciencia { background: #2b7a58; }
+.cat-outros { background: #6b7480; }
+
+.filtros { gap: .35rem; margin-bottom: 1.25rem; --bs-nav-pills-link-active-bg: var(--selo); --bs-nav-link-color: var(--tinta); --bs-nav-link-hover-color: var(--selo); }
+[data-bs-theme="dark"] .filtros { --bs-nav-pills-link-active-color: #14102e; }
+
+.vazio { padding: 2.5rem 1.5rem; border: 1px dashed var(--linha); border-radius: .25rem; text-align: center; background: var(--superficie); }
+.vazio p { margin-bottom: 1rem; color: var(--tinta-suave); }
+.vazio-leve { border-style: solid; text-align: left; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.vazio-leve:last-child { margin-bottom: 0; }
+
+/* ---------- formulários ---------- */
+.ficha { max-width: 40rem; padding: 1.75rem; background: var(--superficie); border: 1px solid var(--linha); border-radius: .25rem; }
+.campo { margin-bottom: 1.15rem; }
+.campo-curto { max-width: 16rem; }
+.linha-campos { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 0 1rem; }
+.form-label { font-weight: 500; margin-bottom: .3rem; }
+.ficha-acoes { display: flex; gap: .75rem; align-items: center; margin-top: 1.5rem; }
+.regra { color: var(--tinta-suave); font-size: .9rem; margin: 0 0 .5rem; max-width: 34rem; }
+
+/* ---------- telas pequenas: o menu lateral vira uma barra no topo ---------- */
+@media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .rail { position: static; height: auto; flex-direction: row; align-items: center; flex-wrap: wrap; gap: .75rem 1rem; padding: .75rem 1rem; border-right: 0; border-bottom: 1px solid var(--linha); }
+    .rail-marca span { display: none; }
+    .rail-nav { flex-direction: row; flex-wrap: wrap; flex: 1; }
+    .rail-nav a { padding: .45rem .6rem; }
+    .rail-nav a.ativo { box-shadow: inset 0 -3px 0 var(--selo); }
+    .rail-tema { margin-top: 0; }
+    .rail-tema span { display: none; }
+    .balcao { grid-template-columns: 1fr; gap: 2rem; }
+    .conteudo { padding-top: 1.5rem; }
+    h1 { font-size: 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

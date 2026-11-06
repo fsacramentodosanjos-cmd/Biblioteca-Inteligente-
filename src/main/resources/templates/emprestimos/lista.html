@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Empréstimos')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('emprestimos')}"></aside>
+
+    <main class="conteudo">
+        <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+        <header class="cabecalho-pagina">
+            <h1>Empréstimos</h1>
+            <a class="btn btn-primary" th:href="@{/emprestimos/novo}"><i class="bi bi-plus-lg"></i> Registrar empréstimo</a>
+        </header>
+
+        <ul class="nav nav-pills filtros">
+            <li class="nav-item"><a class="nav-link" th:classappend="${filtro == 'todos'} ? 'active'" th:href="@{/emprestimos(filtro='todos')}">Todos</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${filtro == 'abertos'} ? 'active'" th:href="@{/emprestimos(filtro='abertos')}">Em aberto</a></li>
+            <li class="nav-item"><a class="nav-link" th:classappend="${filtro == 'atrasados'} ? 'active'" th:href="@{/emprestimos(filtro='atrasados')}">Atrasados</a></li>
+        </ul>
+
+        <div class="vazio" th:if="${emprestimos.isEmpty()}">
+            <p th:if="${filtro == 'atrasados'}">Nenhum empréstimo em atraso.</p>
+            <p th:if="${filtro == 'abertos'}">Nenhum empréstimo em aberto.</p>
+            <p th:if="${filtro == 'todos'}">Nenhum empréstimo registrado ainda.</p>
+            <a class="btn btn-primary" th:href="@{/emprestimos/novo}">Registrar empréstimo</a>
+        </div>
+
+        <div class="table-responsive" th:unless="${emprestimos.isEmpty()}">
+            <table class="table tabela align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Livro</th>
+                    <th scope="col">Usuário</th>
+                    <th scope="col">Emprestado em</th>
+                    <th scope="col">Devolução prevista</th>
+                    <th scope="col">Situação</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${emprestimos}">
+                    <td><strong th:text="${e.livroTitulo()}">Título</strong></td>
+                    <td th:text="${e.usuarioNome()}">Usuário</td>
+                    <td class="num" th:text="${#temporals.format(e.dataEmprestimo(), 'dd/MM/yyyy')}">01/01/2026</td>
+                    <td>
+                        <span class="carimbo"
+                              th:classappend="${e.situacao().name() == 'ATRASADO'} ? 'vencido' : (${e.situacao().name() == 'DEVOLVIDO'} ? 'devolvido' : '')"
+                              th:text="${#temporals.format(e.dataDevolucaoPrevista(), 'dd/MM/yyyy')}">15/01/2026</span>
+                        <small class="nota" th:if="${e.renovacoes() gt 0}"
+                               th:text="'renovado ' + ${e.renovacoes()} + 'x'">renovado</small>
+                    </td>
+                    <td>
+                        <span class="estado" th:classappend="'estado-' + ${e.situacao().css}" th:text="${e.situacao().rotulo}">Em aberto</span>
+                        <small class="nota" th:if="${e.situacao().name() == 'DEVOLVIDO'}"
+                               th:text="'em ' + ${#temporals.format(e.dataDevolucaoReal(), 'dd/MM/yyyy')}">em 10/01/2026</small>
+                        <small class="nota" th:if="${e.diasAtraso() gt 0}"
+                               th:text="${e.diasAtraso()} + ' dia(s), multa de R$ ' + ${#numbers.formatDecimal(e.multa(), 1, 'POINT', 2, 'COMMA')}">multa</small>
+                    </td>
+                    <td class="acoes">
+                        <th:block th:unless="${e.situacao().name() == 'DEVOLVIDO'}">
+                            <form method="post" th:action="@{/emprestimos/{id}/renovar(id=${e.id()})}"
+                                  th:if="${e.situacao().name() == 'EM_ABERTO' and e.renovacoes() lt maxRenovacoes}">
+                                <input type="hidden" name="filtro" th:value="${filtro}">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Renovar</button>
+                            </form>
+                            <form method="post" th:action="@{/emprestimos/{id}/devolver(id=${e.id()})}">
+                                <input type="hidden" name="filtro" th:value="${filtro}">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Devolver</button>
+                            </form>
+                        </th:block>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

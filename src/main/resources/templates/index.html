@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Início')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('inicio')}"></aside>
+
+    <main class="conteudo">
+        <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+        <header class="cabecalho-pagina">
+            <div>
+                <h1>Balcão</h1>
+                <p class="subtitulo" th:text="${#temporals.dayOfWeekName(hoje)} + ', ' + ${#temporals.format(hoje, 'dd/MM/yyyy')}">hoje</p>
+            </div>
+            <a class="btn btn-primary btn-lg" th:href="@{/emprestimos/novo}">
+                <i class="bi bi-plus-lg"></i> Registrar empréstimo
+            </a>
+        </header>
+
+        <dl class="indicadores">
+            <div><dt>no acervo</dt><dd th:text="${resumo.totalLivros()}">0</dd></div>
+            <div><dt>disponíveis</dt><dd th:text="${resumo.livrosDisponiveis()}">0</dd></div>
+            <div><dt>emprestados</dt><dd th:text="${resumo.livrosEmprestados()}">0</dd></div>
+            <div><dt>empréstimos em aberto</dt><dd th:text="${resumo.emprestimosAbertos()}">0</dd></div>
+            <div th:classappend="${resumo.emprestimosAtrasados() > 0} ? 'alerta'">
+                <dt>em atraso</dt><dd th:text="${resumo.emprestimosAtrasados()}">0</dd>
+            </div>
+            <div><dt th:text="${resumo.totalUsuarios() == 1} ? 'usuário' : 'usuários'">usuários</dt><dd th:text="${resumo.totalUsuarios()}">0</dd></div>
+        </dl>
+
+        <div class="balcao">
+            <section aria-labelledby="titulo-atrasos">
+                <h2 id="titulo-atrasos">Devoluções em atraso</h2>
+
+                <p class="vazio vazio-leve" th:if="${atrasados.isEmpty()}">
+                    Nenhum atraso no momento. Todos os livros emprestados estão dentro do prazo.
+                </p>
+
+                <ul class="slips" th:unless="${atrasados.isEmpty()}">
+                    <li class="slip" th:each="e : ${atrasados}">
+                        <div class="slip-corpo">
+                            <strong th:text="${e.livroTitulo()}">Título</strong>
+                            <span th:text="${e.usuarioNome()}">Usuário</span>
+                            <small th:text="${e.diasAtraso()} + ' dia(s) de atraso, multa de R$ ' + ${#numbers.formatDecimal(e.multa(), 1, 'POINT', 2, 'COMMA')}">atraso</small>
+                        </div>
+                        <div class="slip-acao">
+                            <span class="carimbo vencido" th:text="${#temporals.format(e.dataDevolucaoPrevista(), 'dd/MM/yyyy')}">01/01/2026</span>
+                            <form method="post" th:action="@{/emprestimos/{id}/devolver(id=${e.id()})}">
+                                <input type="hidden" name="voltar" value="inicio">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Registrar devolução</button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <section aria-labelledby="titulo-recentes">
+                <h2 id="titulo-recentes">Últimos empréstimos</h2>
+
+                <p class="vazio vazio-leve" th:if="${recentes.isEmpty()}">
+                    Nenhum empréstimo registrado ainda.
+                </p>
+
+                <ul class="slips slips-compactos" th:unless="${recentes.isEmpty()}">
+                    <li class="slip" th:each="e : ${recentes}">
+                        <div class="slip-corpo">
+                            <strong th:text="${e.livroTitulo()}">Título</strong>
+                            <span th:text="${e.usuarioNome()}">Usuário</span>
+                        </div>
+                        <span class="estado" th:classappend="'estado-' + ${e.situacao().css}" th:text="${e.situacao().rotulo}">Em aberto</span>
+                    </li>
+                </ul>
+
+                <p class="atalhos">
+                    <a th:href="@{/livros/novo}">Cadastrar livro</a>
+                    <a th:href="@{/usuarios/novo}">Cadastrar usuário</a>
+                    <a th:href="@{/emprestimos}">Ver todos os empréstimos</a>
+                </p>
+            </section>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Usuários')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('usuarios')}"></aside>
+
+    <main class="conteudo">
+        <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+        <header class="cabecalho-pagina">
+            <h1>Usuários</h1>
+            <a class="btn btn-primary" th:href="@{/usuarios/novo}"><i class="bi bi-plus-lg"></i> Cadastrar usuário</a>
+        </header>
+
+        <form class="busca" method="get" th:action="@{/usuarios}" role="search">
+            <input type="search" name="q" class="form-control" th:value="${q}"
+                   placeholder="Buscar por nome ou e-mail" aria-label="Buscar usuários">
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            <a class="btn btn-link" th:if="${!q.isEmpty()}" th:href="@{/usuarios}">Limpar</a>
+        </form>
+
+        <div class="vazio" th:if="${usuarios.isEmpty()}">
+            <p th:if="${!q.isEmpty()}">Nenhum usuário encontrado para esta busca.</p>
+            <p th:if="${q.isEmpty()}">Nenhum usuário cadastrado. Cadastre o primeiro para poder registrar empréstimos.</p>
+            <a class="btn btn-primary" th:href="@{/usuarios/novo}">Cadastrar usuário</a>
+        </div>
+
+        <div class="table-responsive" th:unless="${usuarios.isEmpty()}">
+            <table class="table tabela align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">E-mail</th>
+                    <th scope="col">Telefone</th>
+                    <th scope="col">Matrícula</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td><strong th:text="${u.nome}">Nome</strong></td>
+                    <td th:text="${u.email}">email@exemplo.com</td>
+                    <td class="num" th:text="${u.telefone}">71900000000</td>
+                    <td class="num" th:text="${#temporals.format(u.dataMatricula, 'dd/MM/yyyy')}">01/01/2026</td>
+                    <td class="acoes">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/emprestimos/novo}">Emprestar</a>
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/usuarios/{id}/editar(id=${u.id})}"
+                           title="Editar" aria-label="Editar usuário"><i class="bi bi-pencil"></i></a>
+                        <form method="post" th:action="@{/usuarios/{id}/excluir(id=${u.id})}"
+                              th:data-confirmar="'Excluir o usuário ' + ${u.nome} + '?'">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir" aria-label="Excluir usuário"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

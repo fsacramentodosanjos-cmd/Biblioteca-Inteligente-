@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Cadastro de usuário')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('usuarios')}"></aside>
+
+    <main class="conteudo">
+        <header class="cabecalho-pagina">
+            <h1 th:text="${usuario.id == null} ? 'Cadastrar usuário' : 'Editar usuário'">Cadastrar usuário</h1>
+        </header>
+
+        <form class="ficha" method="post" novalidate
+              th:object="${usuario}"
+              th:action="${usuario.id == null} ? @{/usuarios} : @{/usuarios/{id}(id=${usuario.id})}">
+
+            <div class="aviso aviso-erro" role="alert" th:if="${#fields.hasGlobalErrors()}">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span th:each="e : ${#fields.globalErrors()}" th:text="${e}">Erro</span>
+            </div>
+
+            <div class="campo">
+                <label for="nome" class="form-label">Nome completo</label>
+                <input type="text" th:field="*{nome}" class="form-control" maxlength="100" required th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{nome}">Erro</div>
+            </div>
+
+            <div class="campo">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" th:field="*{email}" class="form-control" maxlength="100" required th:errorclass="is-invalid">
+                <div class="invalid-feedback" th:errors="*{email}">Erro</div>
+            </div>
+
+            <div class="linha-campos">
+                <div class="campo">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="tel" th:field="*{telefone}" class="form-control" maxlength="11" inputmode="numeric"
+                           placeholder="71999999999" data-somente-numeros required th:errorclass="is-invalid">
+                    <div class="form-text">Somente números, com DDD.</div>
+                    <div class="invalid-feedback" th:errors="*{telefone}">Erro</div>
+                </div>
+                <div class="campo">
+                    <label for="dataMatricula" class="form-label">Data de matrícula</label>
+                    <input type="date" th:field="*{dataMatricula}" class="form-control" required th:errorclass="is-invalid">
+                    <div class="invalid-feedback" th:errors="*{dataMatricula}">Erro</div>
+                </div>
+            </div>
+
+            <div class="ficha-acoes">
+                <button type="submit" class="btn btn-primary">Salvar usuário</button>
+                <a class="btn btn-link" th:href="@{/usuarios}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

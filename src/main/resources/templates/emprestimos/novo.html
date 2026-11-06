@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registrar empréstimo')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('emprestimos')}"></aside>
+
+    <main class="conteudo">
+        <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+        <header class="cabecalho-pagina">
+            <h1>Registrar empréstimo</h1>
+        </header>
+
+        <div class="vazio" th:if="${usuarios.isEmpty() or livros.isEmpty()}">
+            <p th:if="${usuarios.isEmpty()}">Cadastre pelo menos um usuário antes de registrar um empréstimo.</p>
+            <p th:if="${livros.isEmpty()}">Não há livros disponíveis no momento.</p>
+            <a class="btn btn-primary" th:if="${usuarios.isEmpty()}" th:href="@{/usuarios/novo}">Cadastrar usuário</a>
+            <a class="btn btn-primary" th:if="${livros.isEmpty()}" th:href="@{/livros}">Ver livros</a>
+        </div>
+
+        <form class="ficha" method="post" th:action="@{/emprestimos}" th:unless="${usuarios.isEmpty() or livros.isEmpty()}">
+            <div class="campo">
+                <label for="usuarioId" class="form-label">Usuário</label>
+                <select id="usuarioId" name="usuarioId" class="form-select" required>
+                    <option value="">Selecione o usuário</option>
+                    <option th:each="u : ${usuarios}" th:value="${u.id}" th:text="${u.nome} + ' (' + ${u.email} + ')'">Nome</option>
+                </select>
+            </div>
+
+            <div class="campo">
+                <label for="livroId" class="form-label">Livro</label>
+                <select id="livroId" name="livroId" class="form-select" required>
+                    <option value="">Selecione o livro</option>
+                    <option th:each="l : ${livros}" th:value="${l.id}"
+                            th:selected="${livroIdSelecionado != null and l.id == livroIdSelecionado}"
+                            th:text="${l.titulo} + ' — ' + ${l.autor}">Livro</option>
+                </select>
+                <div class="form-text">Só aparecem os livros disponíveis.</div>
+            </div>
+
+            <div class="campo campo-curto">
+                <label for="dataDevolucaoPrevista" class="form-label">Devolução prevista</label>
+                <input id="dataDevolucaoPrevista" name="dataDevolucaoPrevista" type="date" class="form-control"
+                       th:min="${hoje}">
+                <div class="form-text"
+                     th:text="'Deixe em branco para usar o prazo padrão de ' + ${prazoPadrao} + ' dias (até ' + ${#temporals.format(dataSugerida, 'dd/MM/yyyy')} + ').'">
+                    Prazo padrão.
+                </div>
+            </div>
+
+            <p class="regra" th:text="'Cada usuário pode ter até ' + ${limite} + ' livros emprestados ao mesmo tempo. Quem tem devolução em atraso não pode pegar outro livro.'">
+                Regras.
+            </p>
+
+            <div class="ficha-acoes">
+                <button type="submit" class="btn btn-primary">Registrar empréstimo</button>
+                <a class="btn btn-link" th:href="@{/emprestimos}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

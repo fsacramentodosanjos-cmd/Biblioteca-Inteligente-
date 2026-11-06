@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Algo deu errado')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('')}"></aside>
+
+    <main class="conteudo">
+        <header class="cabecalho-pagina">
+            <h1 th:text="${status == 404} ? 'Não encontramos o que você procura' : 'Não foi possível concluir'">Erro</h1>
+        </header>
+        <p class="vazio vazio-leve" th:text="${mensagem != null} ? ${mensagem} : 'Ocorreu um erro inesperado. Tente novamente.'">Mensagem</p>
+        <p><a class="btn btn-primary" th:href="@{/}">Voltar ao início</a></p>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

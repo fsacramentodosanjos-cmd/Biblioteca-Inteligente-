@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Livros')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: menu('livros')}"></aside>
+
+    <main class="conteudo">
+        <div th:replace="~{fragments/layout :: mensagens}"></div>
+
+        <header class="cabecalho-pagina">
+            <h1>Livros</h1>
+            <a class="btn btn-primary" th:href="@{/livros/novo}"><i class="bi bi-plus-lg"></i> Cadastrar livro</a>
+        </header>
+
+        <form class="busca" method="get" th:action="@{/livros}" role="search">
+            <input type="search" name="q" class="form-control" th:value="${q}"
+                   placeholder="Buscar por título, autor ou ISBN" aria-label="Buscar livros">
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+            <a class="btn btn-link" th:if="${!q.isEmpty()}" th:href="@{/livros}">Limpar</a>
+        </form>
+
+        <div class="vazio" th:if="${livros.isEmpty()}">
+            <p th:if="${!q.isEmpty()}">Nenhum livro encontrado para esta busca. Confira a grafia ou procure pelo ISBN.</p>
+            <p th:if="${q.isEmpty()}">O acervo está vazio. Cadastre o primeiro livro para começar.</p>
+            <a class="btn btn-primary" th:href="@{/livros/novo}">Cadastrar livro</a>
+        </div>
+
+        <div class="table-responsive" th:unless="${livros.isEmpty()}">
+            <table class="table tabela align-middle">
+                <thead>
+                <tr>
+                    <th scope="col">Livro</th>
+                    <th scope="col">ISBN</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Situação</th>
+                    <th scope="col" class="text-end">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="l : ${livros}">
+                    <td>
+                        <div class="livro-celula">
+                            <span class="lombada" th:classappend="'cat-' + ${l.categoria.name().toLowerCase()}"></span>
+                            <div>
+                                <strong th:text="${l.titulo}">Título</strong>
+                                <small th:text="${l.autor} + ', ' + ${l.anoPublicacao}">Autor, 2000</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="num" th:text="${l.isbn}">000</td>
+                    <td th:text="${l.categoria.rotulo}">Categoria</td>
+                    <td><span class="estado" th:classappend="'estado-' + ${l.status.css}" th:text="${l.status.rotulo}">Disponível</span></td>
+                    <td class="acoes">
+                        <a class="btn btn-sm btn-outline-primary" th:if="${l.status.name() == 'DISPONIVEL'}"
+                           th:href="@{/emprestimos/novo(livroId=${l.id})}">Emprestar</a>
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/livros/{id}/editar(id=${l.id})}"
+                           title="Editar" aria-label="Editar livro"><i class="bi bi-pencil"></i></a>
+                        <form method="post" th:action="@{/livros/{id}/excluir(id=${l.id})}"
+                              th:data-confirmar="'Excluir o livro ' + ${l.titulo} + '?'">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Excluir" aria-label="Excluir livro"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
